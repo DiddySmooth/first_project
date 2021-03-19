@@ -61,3 +61,6 @@ Create function that determines what room you are in for lights
 Create a Fog
 MakeEnemyPaths Change
 
+## Resources
+
+https://medium.com/@hemalatha.psna/collision-detection-in-javascript-efafe8bba2c0

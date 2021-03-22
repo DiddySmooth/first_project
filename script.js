@@ -60,99 +60,108 @@ class Enemy extends Collider {
     super(x, y, 50, 80, 'black')
     this.alive = true 
   }
-
     render() {
-        super.render()
+    super.render()
   }
 }
 
 class Wall extends Collider{
     
 }
-const player = new Collider(100, 200, 50, 50, 'green')
+const player = new Collider(900, 700, 25, 25, 'green')
 
 
 const walls = [
-    new Wall(0, 50, 1000, 15, "black"),
-    new Wall(1, 0, 15, 800, "black"),
-    new Wall(990, 1, 15, 800, "black"),
-    new Wall(1, 750, 1000, 15, "black"),
-
+  new Wall(0, 0, 1000, 15, "black"),
+  new Wall(0, 0, 15, 800, "black"),
+  new Wall(990, 1, 15, 800, "black"),
+  new Wall(0, 785, 1000, 15, "black"),
+  new Wall(0, 200, 400, 15, "yellow"),
+  new Wall(0, 340, 300, 15, "black"),
+  new Wall(0, 600, 800, 15, "black"),
+  new Wall(300, 200, 15, 50, "black"),
+  new Wall(300, 290, 15, 65, "black"),
+  new Wall(300, 400, 15, 200, "black"),
+  new Wall(450, 0, 15, 150, "black"),
+  new Wall(450, 200, 15, 15, "black"),
+  new Wall(840, 600, 200, 15, "black"),
+  new Wall(840, 400, 15, 200, "black"),
+  new Wall(840, 300, 15, 50, "black"),
+  new Wall(840, 300, 200, 15, "black"),
+  new Wall(950, 0, 50, 300, "gray"),
+  new Wall(700, 0, 300, 50, "gray"),
+  new Wall(820, 100, 50, 130, "gray"),
+  new Wall(550, 75, 100, 200, "orange"),
+  new Wall(400, 400, 250, 50, "gray"),
+  new Wall(490, 570, 70, 30, "gray"),
+  new Wall(480, 480, 90, 40, "gray"),
+  new Wall(15, 440, 180, 120, "red"),
+  new Wall(15, 50, 180, 120, "red"),
 ]
+
 
 
 const enemies = [
-  new Enemy(175, 250),
-  new Enemy(250, 300),
-  new Enemy(500, 125)
+  new Enemy(700, 700),
+  new Enemy(700, 700),
+  new Enemy(700, 700)
 ]
 
-let PLAYER_SPEED = 10
+let move = 10
 
 document.addEventListener('keydown', (event) => {
-     if (event.key === 'w') {
-        player.y -= PLAYER_SPEED
-     } else if (event.key === 's') {
-        player.y += PLAYER_SPEED
-     } else if (event.key === 'a') {
-        player.x -= PLAYER_SPEED
-     } else if (event.key === 'd') {
-        player.x += PLAYER_SPEED
-     }  else if (event.key === 'f') {
-        
-        if(player.lightsCD == false){ 
-            lightsOn()
-        }
-        setTimeout(lightsOff, player.time)
-        setTimeout(lightsCoolDown, player.timeCD)
-        
-     }
-  
+  if (event.key === 'w') {
+    player.y -= move
+  } else if (event.key === 's') {
+    player.y += move
+  } else if (event.key === 'a') {
+    player.x -= move
+  } else if (event.key === 'd') {
+    player.x += move
+  }  else if (event.key === 'f') {      
+    if(player.lightsCD == false){ 
+      lightsOn()
+      setTimeout(lightsOff, player.time)
+      setTimeout(lightsCoolDown, player.timeCD)
+    }
+  }
 })
+
 const lightsOff = () => {    
-        player.lights = false
-        console.log("Lights off")
+  player.lights = false
+  console.log("Lights off")
 }
 const lightsOn = () => {
-    if(player.lightsCD == false){
-        player.lights = true
-        player.lightsCD = true
-        console.log("Lights On")
-    }
+  if(player.lightsCD == false){
+    player.lights = true
+    player.lightsCD = true
+    console.log("Lights On")
+  }
 }
 const lightsCoolDown = () => {
     player.lightsCD = false
 }
 
-
 const checkCollision = (object) => {
-    if (player.isCollidingWith(object) && object instanceof Enemy) {
-        console.log("Hit");
-        player.dead = true
-  }
-    if (player.isCollidingWith(object) && object instanceof Wall) {
-        console.log("Wall")
-        console.log(object.bottomEdge())
-        console.log(object.topEdge())
-        console.log(player.bottomEdge())
-        console.log(player.topEdge())
 
-        if(player.topEdge() < object.bottomEdge() && !(player.bottomEdge() > object.topEdge())) {
-            console.log("top player: bottom wall")
-            player.y = object.bottomEdge() + 1
-        }
-        else if(player.bottomEdge() > object.topEdge() && !(player.topEdge() < object.bottomEdge())){
-            console.log("Bottom player : top wall")
-            player.y = object.topEdge() - 1 - player.height
-        }
-    //   player.y = object.y - 1
-    //   player.x = object.x - 1
+  if (player.isCollidingWith(object) && object instanceof Enemy) {
+    console.log("Hit");
+    player.dead = true
+  }
+  if (player.isCollidingWith(object) && object instanceof Wall) {
+    console.log("Wall")
+
+    if(player.x >= object.x - object.width-5 && player.x <= object.x + object.width+5 && player.y >= object.y - object.height-5 && player.y <= object.y + object.height+ 5)  {
+      move = 5 + move*-1
+    }   
   }
 }
+
 const gameOver = () => {
-    context.clearRect(0, 0, canvas.width, canvas.height)
-    console.log("Game over")
-    clearInterval(intervalId);
+
+  context.clearRect(0, 0, canvas.width, canvas.height)
+  console.log("Game over")
+  clearInterval(intervalId);
 }
 
 const shadows = new Collider(0, 0, 1000, 800, 'black')
@@ -162,28 +171,25 @@ const shadows = new Collider(0, 0, 1000, 800, 'black')
 
 
 const intervalId = setInterval(() => {
-//   checkWin()
-     
-
-    context.clearRect(0, 0, canvas.width, canvas.height)
-    if(player.lights == false){
-        shadows.render()
-    } 
-    if (player.dead == false)
-        player.render()
-    else if(player.dead == true)
-        gameOver()
-    enemies.forEach(e => {
-        e.render()
-        checkCollision(e)
-    walls.forEach(w =>{
-        w.render()
-        checkCollision(w)
-    } )
+  move = 10
+  context.clearRect(0, 0, canvas.width, canvas.height)
+  if(player.lights == false){
+    shadows.render()
+  } 
+  if (player.dead == false)
+    player.render()
+  else if(player.dead == true)
+    gameOver()
+  enemies.forEach(e => {
+    e.render()
+    checkCollision(e)
+  walls.forEach(w =>{
+    w.render()
+    checkCollision(w)
+    })
+    
     
   })
 }, 50);
-
-
 
 

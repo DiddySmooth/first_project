@@ -8,6 +8,7 @@ canvas.setAttribute('width', canvasWidth)
 
 const context = canvas.getContext('2d')
 
+let move = 10
 
 
 class Collider {
@@ -22,6 +23,7 @@ class Collider {
     this.lights = false
     this.lightsCD = false
     this.timeCD = 10000
+    this.hasObject = false
   }
 
   render() {
@@ -56,58 +58,126 @@ class Collider {
 }
 
 class Enemy extends Collider {
-  constructor(x, y) {
-    super(x, y, 50, 80, 'black')
+  constructor(x, y, top, left, right, bottom) {
+    super(x, y, 45, 45, 'white')
     this.alive = true 
+    this.pathTop = top
+    this.pathLeft = left
+    this.pathRight = right
+    this.pathBottom = bottom
+    this.step = 0
   }
     render() {
-    super.render()
+      this.image1 = document.getElementById('ghost')
+      context.drawImage(this.image1, this.x,this.y)
   }
 }
 
+
+class Furniture extends Collider{
+  constructor(x, y, img) {
+    super(x,y)
+    this.y = y
+    this.x = x
+    this.image = img
+    
+  }
+  render(){
+    context.drawImage(this.image, this.x,this.y)
+  }
+}
+
+
+
+class Secret extends Collider{
+    
+}
+class End extends Collider{
+    
+}
 class Wall extends Collider{
     
 }
-const player = new Collider(900, 700, 25, 25, 'green')
+class Player extends Collider{
+  render(){
+    this.image1 = document.getElementById('player')
+    context.drawImage(this.image1, this.x,this.y)
+  }
+}
 
+
+
+
+
+const player = new Player(875, 700, 25, 25, 'green')
+const end = new End(900, 700, 70, 70, 'white')
+const darkness = new Collider(0, 0, 1000, 800, 'black')
+
+imgCouch = document.getElementById('couch')
+imgBed = document.getElementById('bed')
 
 const walls = [
-  new Wall(0, 0, 1000, 15, "black"),
-  new Wall(0, 0, 15, 800, "black"),
-  new Wall(990, 1, 15, 800, "black"),
-  new Wall(0, 785, 1000, 15, "black"),
-  new Wall(0, 200, 400, 15, "yellow"),
-  new Wall(0, 340, 300, 15, "black"),
-  new Wall(0, 600, 800, 15, "black"),
-  new Wall(300, 200, 15, 50, "black"),
-  new Wall(300, 290, 15, 65, "black"),
-  new Wall(300, 400, 15, 200, "black"),
-  new Wall(450, 0, 15, 150, "black"),
-  new Wall(450, 200, 15, 15, "black"),
-  new Wall(840, 600, 200, 15, "black"),
-  new Wall(840, 400, 15, 200, "black"),
-  new Wall(840, 300, 15, 50, "black"),
-  new Wall(840, 300, 200, 15, "black"),
-  new Wall(950, 0, 50, 300, "gray"),
-  new Wall(700, 0, 300, 50, "gray"),
-  new Wall(820, 100, 50, 130, "gray"),
-  new Wall(550, 75, 100, 200, "orange"),
-  new Wall(400, 400, 250, 50, "gray"),
-  new Wall(490, 570, 70, 30, "gray"),
-  new Wall(480, 480, 90, 40, "gray"),
-  new Wall(15, 440, 180, 120, "red"),
-  new Wall(15, 50, 180, 120, "red"),
+  new Wall(0, 0, 1000, 15, "black"), //border
+  new Wall(0, 0, 15, 800, "black"), //border
+  new Wall(990, 1, 15, 800, "black"),   //border
+  new Wall(0, 785, 1000, 15, "black"),    //border
+  new Wall(0, 200, 400, 15, "black"),  //lower wall top bedrooom
+  new Wall(0, 340, 300, 15, "black"), //lower wall bathroom
+  new Wall(0, 600, 800, 15, "black"), // lower house wall
+  new Wall(300, 200, 15, 50, "black"), //top door wall bathroom
+  new Wall(300, 290, 15, 65, "black"), // lower door wall bathroom
+  new Wall(300, 400, 15, 200, "black"), // bedroom wall
+  new Wall(450, 0, 15, 150, "black"), // upper bedroom right wall
+  new Wall(450, 200, 15, 15, "black"), // corner peice 
+  new Wall(840, 600, 200, 15, "black"), // lower office wall
+  new Wall(840, 400, 15, 200, "black"), // left office wall
+  new Wall(840, 300, 15, 50, "black"), //left office wall corner
+  new Wall(840, 300, 200, 15, "black"), //office upper wall
+  new Wall(950, 0, 50, 300, "gray"), // right counter
+  new Wall(700, 0, 300, 50, "gray"), // top counter
+  new Wall(820, 107, 50, 130, "gray"), // island
+  new Wall(550, 75, 100, 200, "orange"), // table
+  new Furniture(400, 400, imgCouch), // couch
+  new Wall(490, 570, 70, 30, "gray"), // tv stand
+  new Wall(480, 480, 90, 40, "gray"), // coffee table
+  new Furniture(15, 440,imgBed), //bed lower
+  new Furniture(15, 60, imgBed),  //bed upper
+  // new Wall(350, 350, 400, 200, "blue"),
+  
 ]
+
+// x y top left right bottom
 
 
 
 const enemies = [
-  new Enemy(700, 700),
-  new Enemy(700, 700),
+  new Enemy(750, 60, 60, 750, 890, 240),
+  new Enemy(350, 350, 350, 350, 750, 550),
   new Enemy(700, 700)
 ]
 
-let move = 10
+const secret = new Secret(900, 500, 25, 25, 'blue')
+
+
+const enemyMove = (enemy) => {   
+  if(enemy.step == 0)
+    enemy.y += move
+    if(enemy.y == enemy.pathBottom)
+      enemy.step = 1
+  if(enemy.step == 1)
+    enemy.x += move
+    if(enemy.x == enemy.pathRight) 
+      enemy.step = 2
+  if(enemy.step == 2)
+    enemy.y -= move
+    if(enemy.y == enemy.pathTop)
+      enemy.step = 3
+  if(enemy.step ==3)
+    enemy.x -= move
+    if(enemy.x == enemy.pathLeft)         
+      enemy.step = 0
+}
+
 
 document.addEventListener('keydown', (event) => {
   if (event.key === 'w') {
@@ -155,6 +225,12 @@ const checkCollision = (object) => {
       move = 5 + move*-1
     }   
   }
+  if (player.isCollidingWith(object) && object instanceof Secret){
+    player.hasObject = true
+  }
+  if (player.isCollidingWith(object) && object instanceof End && player.hasObject === true){
+    gameOver()
+  } 
 }
 
 const gameOver = () => {
@@ -164,32 +240,46 @@ const gameOver = () => {
   clearInterval(intervalId);
 }
 
-const shadows = new Collider(0, 0, 1000, 800, 'black')
+
 
 
 
 
 
 const intervalId = setInterval(() => {
+  
   move = 10
   context.clearRect(0, 0, canvas.width, canvas.height)
-  if(player.lights == false){
-    shadows.render()
-  } 
-  if (player.dead == false)
-    player.render()
-  else if(player.dead == true)
-    gameOver()
+  
+  
   enemies.forEach(e => {
     e.render()
     checkCollision(e)
+    enemyMove(e)
   walls.forEach(w =>{
     w.render()
     checkCollision(w)
     })
-    
-    
-  })
+  }) 
+  if (player.hasObject == false)
+  {  
+    secret.render() 
+    checkCollision(secret) 
+  } 
+  end.render()
+  if (player.hasObject == true)
+  {
+    checkCollision(end)
+  }
+  if(player.lights == false){
+    context.globalAlpha = .95
+    darkness.render()
+    context.globalAlpha = 1
+  }
+  if (player.dead == false)
+    player.render()
+  else if(player.dead == true)
+    gameOver()
 }, 50);
 
 

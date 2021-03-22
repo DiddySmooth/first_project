@@ -6,4 +6,17 @@ canvas{
     height: 800px;
     border: solid;
     border-color: red;
+    background-color: peachpuff;
+}
+img{
+    width: 25px;
+    height: 25px
+}
+#ghost{
+    width: 25px;
+    height: 25px
+}
+
+.hidden{
+    display: none
 }

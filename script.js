@@ -10,7 +10,7 @@ const context = canvas.getContext('2d')
 
 let move = 10
 let intervalId
-let enemySpeed = 10
+let enemySpeed = 8
 class Collider {
   constructor(x, y, width, height, color) {
     this.x = x
@@ -91,7 +91,10 @@ class Furniture extends Collider{
 
 
 class Secret extends Collider{
-    
+  render(){
+    this.image1 = document.getElementById('key')
+    context.drawImage(this.image1, this.x,this.y)
+  }
 }
 class End extends Collider{
     
@@ -116,6 +119,11 @@ const darkness = new Collider(0, 0, 1000, 800, 'black')
 
 imgCouch = document.getElementById('couch')
 imgBed = document.getElementById('bed')
+imgToilet = document.getElementById('toilet')
+imgCounterRight = document.getElementById('counter-top')
+imgCounterTop = document.getElementById('counter-right')
+imgFloor = document.getElementById('floor')
+imgTable = document.getElementById('table')
 
 const walls = [
   new Wall(0, 0, 1000, 15, "black"), //border
@@ -134,16 +142,19 @@ const walls = [
   new Wall(840, 400, 15, 200, "black"), // left office wall
   new Wall(840, 300, 15, 50, "black"), //left office wall corner
   new Wall(840, 300, 200, 15, "black"), //office upper wall
-  new Wall(950, 0, 50, 300, "gray"), // right counter
-  new Wall(700, 0, 300, 50, "gray"), // top counter
+  new Furniture(700, 0, floor),
+  new Furniture(700, 0, imgCounterRight),
+  new Furniture(950, 0, imgCounterTop), // right counter
   new Wall(820, 107, 50, 130, "gray"), // island
   new Wall(550, 75, 100, 200, "orange"), // table
+  new Furniture(550, 75, imgTable),
   new Furniture(400, 400, imgCouch), // couch
   new Wall(490, 570, 70, 30, "gray"), // tv stand
   new Wall(480, 480, 90, 40, "gray"), // coffee table
   new Furniture(15, 440,imgBed), //bed lower
   new Furniture(15, 60, imgBed),  //bed upper
-  //new Wall(15, 400, 200, 180, "blue"),
+  new Furniture(15, 240, imgToilet),
+  //new Wall(85, 310, 140, 290, "blue"),
   
 ]
 
@@ -154,7 +165,10 @@ const walls = [
 const enemies = [
   new Enemy(750, 60, 60, 750, 890, 240, "rect"),
   new Enemy(350, 350, 350, 350, 750, 550, "rect"),
-  new Enemy(15, 400, 400, 15, 215, 580, "rect")
+  new Enemy(15, 400, 400, 15, 215, 580, "rect"),
+  new Enemy(15, 15, 15, 15, 215, 175, "rect"),
+  new Enemy(860, 330, 330, 860, 970, 580, "rect")
+  
 ]
 
 
@@ -162,6 +176,9 @@ const enemies = [
 
 const secret = [
   new Secret(900, 500, 25, 25, 'blue'),
+  new Secret(15, 15, 25, 25, 'blue'),
+  new Secret(15, 580, 25, 25, 'blue'),
+
 ]
 
 
@@ -246,39 +263,49 @@ const gameOver = () => {
   console.log("Game over")
   clearInterval(intervalId)
   document.getElementById("game").classList.add('hidden')
+
   if(player.dead == true)
   {
     console.log("You lose the ghost got you")
     document.getElementById("lose").classList.remove('hidden')
   }
   else{
-    document.getElementById("win").classList.remove('hidden')
+    document.querySelector(".win").classList.remove('hidden')
   }
 
 }
 
 
 const startGame = () => {
+  player.dead = false
+  player.hasObject = false
+  enemySpeed = 10
+  move = 10
+  player.x = 875
+  player.y = 700
+  document.querySelector(".win").classList.add('hidden')
+  document.getElementById("lose").classList.add('hidden')
+  rand = Math.floor(Math.random() * secret.length)
   document.getElementById("game").classList.remove('hidden')
   intervalId = setInterval(() => {
   
     move = 10
     context.clearRect(0, 0, canvas.width, canvas.height)
-    
+    walls.forEach(w =>{
+      w.render()
+      checkCollision(w)
+      })
     
     enemies.forEach(e => {
       e.render()
       checkCollision(e)
       enemyMove(e)
-    walls.forEach(w =>{
-      w.render()
-      checkCollision(w)
-      })
+    
     }) 
     if (player.hasObject == false)
     {  
-      secret[0].render() 
-      checkCollision(secret[0]) 
+      secret[rand].render() 
+      checkCollision(secret[rand]) 
     } 
     end.render()
     if (player.hasObject == true)
@@ -299,11 +326,9 @@ const startGame = () => {
 
 
 document.getElementById("start").addEventListener("click", function() {
+
   startGame()
-  player.dead = false
-  player.hasObject = false
-  document.getElementById("win").classList.add('hidden')
-  document.getElementById("lose").classList.add('hidden')
+  
 })
 
 

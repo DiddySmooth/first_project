@@ -6,7 +6,7 @@ canvas{
     height: 800px;
     border: solid;
     border-color: red;
-    background-color: peachpuff;
+    background-image: url("assets/woodfloor.png");
 }
 img{
     width: 25px;
@@ -15,10 +15,6 @@ img{
 #ghost{
     width: 25px;
     height: 25px
-}
-
-.hidden{
-    display: none
 }
 .title{
     display:flex;
@@ -40,4 +36,17 @@ body{
 }
 #lose{
     color:white;
+}
+.ghostbuster{
+    width: 500px;
+    height: 300px;
+}.win{
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+}
+.hidden{
+    display: none
 }

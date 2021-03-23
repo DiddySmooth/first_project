@@ -46,6 +46,19 @@ body{
     flex-direction: column;
     align-items: center;
     margin-top: 50px;
+    color:white;
+}
+.lose{
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px;
+    color:white;
+}
+.died{
+    width: 400px;   
+    height: 400px;
 }
 .hidden{
     display: none

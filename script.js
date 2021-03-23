@@ -124,6 +124,9 @@ imgCounterRight = document.getElementById('counter-top')
 imgCounterTop = document.getElementById('counter-right')
 imgFloor = document.getElementById('floor')
 imgTable = document.getElementById('table')
+imgIsland = document.getElementById('island')
+imgCoffee = document.getElementById('coffee')
+imgTv = document.getElementById('tv')
 
 const walls = [
   new Wall(0, 0, 1000, 15, "black"), //border
@@ -145,12 +148,15 @@ const walls = [
   new Furniture(700, 0, floor),
   new Furniture(700, 0, imgCounterRight),
   new Furniture(950, 0, imgCounterTop), // right counter
-  new Wall(820, 107, 50, 130, "gray"), // island
+  //new Wall(820, 107, 50, 130, "gray"), // island
   new Wall(550, 75, 100, 200, "orange"), // table
+  new Furniture(820, 107, imgIsland),
   new Furniture(550, 75, imgTable),
   new Furniture(400, 400, imgCouch), // couch
   new Wall(490, 570, 70, 30, "gray"), // tv stand
+  new Furniture(490, 570, imgTv),
   new Wall(480, 480, 90, 40, "gray"), // coffee table
+  new Furniture(480, 480, imgCoffee),
   new Furniture(15, 440,imgBed), //bed lower
   new Furniture(15, 60, imgBed),  //bed upper
   new Furniture(15, 240, imgToilet),
@@ -267,7 +273,7 @@ const gameOver = () => {
   if(player.dead == true)
   {
     console.log("You lose the ghost got you")
-    document.getElementById("lose").classList.remove('hidden')
+    document.querySelector(".lose").classList.remove('hidden')
   }
   else{
     document.querySelector(".win").classList.remove('hidden')
@@ -284,7 +290,7 @@ const startGame = () => {
   player.x = 875
   player.y = 700
   document.querySelector(".win").classList.add('hidden')
-  document.getElementById("lose").classList.add('hidden')
+  document.querySelector(".lose").classList.add('hidden')
   rand = Math.floor(Math.random() * secret.length)
   document.getElementById("game").classList.remove('hidden')
   intervalId = setInterval(() => {

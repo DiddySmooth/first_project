@@ -9,8 +9,8 @@ canvas.setAttribute('width', canvasWidth)
 const context = canvas.getContext('2d')
 
 let move = 10
-
-
+let intervalId
+let enemySpeed = 10
 class Collider {
   constructor(x, y, width, height, color) {
     this.x = x
@@ -58,7 +58,7 @@ class Collider {
 }
 
 class Enemy extends Collider {
-  constructor(x, y, top, left, right, bottom) {
+  constructor(x, y, top, left, right, bottom, type) {
     super(x, y, 45, 45, 'white')
     this.alive = true 
     this.pathTop = top
@@ -66,6 +66,7 @@ class Enemy extends Collider {
     this.pathRight = right
     this.pathBottom = bottom
     this.step = 0
+    this.type = type
   }
     render() {
       this.image1 = document.getElementById('ghost')
@@ -142,7 +143,7 @@ const walls = [
   new Wall(480, 480, 90, 40, "gray"), // coffee table
   new Furniture(15, 440,imgBed), //bed lower
   new Furniture(15, 60, imgBed),  //bed upper
-  // new Wall(350, 350, 400, 200, "blue"),
+  //new Wall(15, 400, 200, 180, "blue"),
   
 ]
 
@@ -151,31 +152,37 @@ const walls = [
 
 
 const enemies = [
-  new Enemy(750, 60, 60, 750, 890, 240),
-  new Enemy(350, 350, 350, 350, 750, 550),
-  new Enemy(700, 700)
+  new Enemy(750, 60, 60, 750, 890, 240, "rect"),
+  new Enemy(350, 350, 350, 350, 750, 550, "rect"),
+  new Enemy(15, 400, 400, 15, 215, 580, "rect")
 ]
 
-const secret = new Secret(900, 500, 25, 25, 'blue')
+
+
+
+const secret = [
+  new Secret(900, 500, 25, 25, 'blue'),
+]
 
 
 const enemyMove = (enemy) => {   
-  if(enemy.step == 0)
-    enemy.y += move
-    if(enemy.y == enemy.pathBottom)
-      enemy.step = 1
-  if(enemy.step == 1)
-    enemy.x += move
-    if(enemy.x == enemy.pathRight) 
-      enemy.step = 2
-  if(enemy.step == 2)
-    enemy.y -= move
-    if(enemy.y == enemy.pathTop)
-      enemy.step = 3
-  if(enemy.step ==3)
-    enemy.x -= move
-    if(enemy.x == enemy.pathLeft)         
-      enemy.step = 0
+  if(enemy.type == "rect")
+    if(enemy.step == 0)
+      enemy.y += enemySpeed
+      if(enemy.y == enemy.pathBottom)
+        enemy.step = 1
+    if(enemy.step == 1)
+      enemy.x += enemySpeed
+      if(enemy.x == enemy.pathRight) 
+        enemy.step = 2
+    if(enemy.step == 2)
+      enemy.y -= enemySpeed
+      if(enemy.y == enemy.pathTop)
+        enemy.step = 3
+    if(enemy.step ==3)
+      enemy.x -= enemySpeed
+      if(enemy.x == enemy.pathLeft)         
+        enemy.step = 0
 }
 
 
@@ -237,49 +244,68 @@ const gameOver = () => {
 
   context.clearRect(0, 0, canvas.width, canvas.height)
   console.log("Game over")
-  clearInterval(intervalId);
+  clearInterval(intervalId)
+  document.getElementById("game").classList.add('hidden')
+  if(player.dead == true)
+  {
+    console.log("You lose the ghost got you")
+    document.getElementById("lose").classList.remove('hidden')
+  }
+  else{
+    document.getElementById("win").classList.remove('hidden')
+  }
+
 }
 
 
-
-
-
-
-
-const intervalId = setInterval(() => {
+const startGame = () => {
+  document.getElementById("game").classList.remove('hidden')
+  intervalId = setInterval(() => {
   
-  move = 10
-  context.clearRect(0, 0, canvas.width, canvas.height)
-  
-  
-  enemies.forEach(e => {
-    e.render()
-    checkCollision(e)
-    enemyMove(e)
-  walls.forEach(w =>{
-    w.render()
-    checkCollision(w)
-    })
-  }) 
-  if (player.hasObject == false)
-  {  
-    secret.render() 
-    checkCollision(secret) 
-  } 
-  end.render()
-  if (player.hasObject == true)
-  {
-    checkCollision(end)
-  }
-  if(player.lights == false){
-    context.globalAlpha = .95
-    darkness.render()
-    context.globalAlpha = 1
-  }
-  if (player.dead == false)
-    player.render()
-  else if(player.dead == true)
-    gameOver()
-}, 50);
+    move = 10
+    context.clearRect(0, 0, canvas.width, canvas.height)
+    
+    
+    enemies.forEach(e => {
+      e.render()
+      checkCollision(e)
+      enemyMove(e)
+    walls.forEach(w =>{
+      w.render()
+      checkCollision(w)
+      })
+    }) 
+    if (player.hasObject == false)
+    {  
+      secret[0].render() 
+      checkCollision(secret[0]) 
+    } 
+    end.render()
+    if (player.hasObject == true)
+    {
+      checkCollision(end)
+    }
+    if(player.lights == false){
+      context.globalAlpha = .95
+      darkness.render()
+      context.globalAlpha = 1
+    }
+    if (player.dead == false)
+      player.render()
+    else if(player.dead == true)
+      gameOver()
+  }, 50);
+}
+
+
+document.getElementById("start").addEventListener("click", function() {
+  startGame()
+  player.dead = false
+  player.hasObject = false
+  document.getElementById("win").classList.add('hidden')
+  document.getElementById("lose").classList.add('hidden')
+})
+
+
 
 

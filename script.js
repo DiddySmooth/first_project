@@ -139,7 +139,7 @@ const walls = [
   new Wall(300, 200, 15, 50, "black"), //top door wall bathroom
   new Wall(300, 290, 15, 65, "black"), // lower door wall bathroom
   new Wall(300, 400, 15, 200, "black"), // bedroom wall
-  new Wall(450, 0, 15, 150, "black"), // upper bedroom right wall
+  new Wall(450, 0, 15, 200, "black"), // upper bedroom right wall
   new Wall(450, 200, 15, 15, "black"), // corner peice 
   new Wall(840, 600, 200, 15, "black"), // lower office wall
   new Wall(840, 400, 15, 200, "black"), // left office wall
@@ -319,7 +319,7 @@ const startGame = () => {
       checkCollision(end)
     }
     if(player.lights == false){
-      context.globalAlpha = .95
+      context.globalAlpha = .97
       darkness.render()
       context.globalAlpha = 1
     }

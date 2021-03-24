@@ -63,4 +63,3 @@ MakeEnemyPaths Change
 
 ## Resources
 
-https://medium.com/@hemalatha.psna/collision-detection-in-javascript-efafe8bba2c0
